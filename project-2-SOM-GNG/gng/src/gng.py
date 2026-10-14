@@ -15,14 +15,14 @@ class GrowingNeuralGas:
         self.errors = np.zeros(max_nodes, dtype=np.float32)
         self.is_active = np.zeros(max_nodes, dtype=bool)
         
-        #matrizes de adjacência
+        # matrizes de adjacência
         self.edges = np.zeros((max_nodes, max_nodes), dtype=bool)
         self.ages = np.zeros((max_nodes, max_nodes), dtype=np.int32)
         
         self.num_nodes = 0
         
     def fit(self, pixels, epochs=1):
-        #criação de c1 e c2
+        #iniciar a rede N com dois neurônios c1 e c2
         idx = np.random.choice(len(pixels), 2, replace=False)
         self.nodes[0] = pixels[idx[0]]
         self.nodes[1] = pixels[idx[1]]
@@ -31,6 +31,7 @@ class GrowingNeuralGas:
         self.is_active[1] = True
         self.num_nodes = 2
         
+        #iniciar o conjunto de conexões C
         self.edges[0, 1] = True
         self.edges[1, 0] = True
         
@@ -40,59 +41,63 @@ class GrowingNeuralGas:
             rand_idx = np.random.permutation(len(pixels))
             
             for idx in rand_idx:
+                #seleciona um padrão xi e o apresenta a rede
                 p = pixels[idx]
-                # 1. Filtra apenas os nós ativos via máscara booleana
+                
+                #filtra apenas os nós ativos via máscara booleana
                 active_idx = np.where(self.is_active)[0]
                 if len(active_idx) < 2:
                     continue
                     
                 active_nodes = self.nodes[active_idx]
                 
-                # 2. Encontra os 2 nós vencedores
+                #processo competitivo
+                #determinar os dois neurônios mais próximos
                 dists = np.linalg.norm(p - active_nodes, axis=1)
                 sorted_local = np.argsort(dists)
                 
-                # Mapeia de volta para os índices globais (0 a MAX_NODES)
+                #mapear de volta para os índices globais
                 s1 = active_idx[sorted_local[0]]
                 s2 = active_idx[sorted_local[1]]
                 
-                # 3. Atualiza erro do vencedor
+                #adicionar o quadrado da distância entre o neurônio vencedor e o padrão xi a uma variável de erro local Es1
                 self.errors[s1] += dists[sorted_local[0]]**2
                 
-                # 4. Move o vencedor e seus vizinhos
+                #atualizar os pesos do neurônio vencedor s1 e seus vizinhos
                 self.nodes[s1] += self.eta_b * (p - self.nodes[s1])
                 
-                # Encontra vizinhos varrendo a linha de s1 na matriz de adjacência
+                #encontra vizinhos varrendo a linha de s1 na matriz de adjacência
                 neighbors = np.where(self.edges[s1] & self.is_active)[0]
                 for n in neighbors:
-                    self.nodes[n] += self.eta_n * (p - self.nodes[n])
+                    self.nodes[n] += self.eta_n * (p - self.nodes[n]) #atualiza os vizinhos
+                    #ncrementar a idade de todas as conexões de s1
                     self.ages[s1, n] += 1
                     self.ages[n, s1] += 1
                     
-                # 5. Conecta s1 e s2
+                #se não existir uma conexão entre s1 e s2, então criá-la
                 self.edges[s1, s2] = True
                 self.edges[s2, s1] = True
                 self.ages[s1, s2] = 0
                 self.ages[s2, s1] = 0
                 
-                # 6. Poda (zera booleanos e contadores onde a idade estourou)
+                #remover as conexões com idade maior que amax
                 old_edges = np.where((self.ages[s1] > self.max_age) & self.edges[s1])[0]
                 for n in old_edges:
                     self.edges[s1, n] = False
                     self.edges[n, s1] = False
                 
-                # Remove nós sem conexões ativas
+                #remover neurônios sem conexão
                 for i in active_idx:
                     if not np.any(self.edges[i]):
                         self.is_active[i] = False
                         self.num_nodes -= 1
                 
-                # 7. Insere novo nó periodicamente
+                #caso a condição seja satisfeita, inserir um novo neurônio a rede
                 iteration += 1
                 if iteration % self.lambda_step == 0 and self.num_nodes < self.max_nodes:
                     self._insert_node()
                     
-                # 8. Decaimento global nos nós ativos
+                #diminuir o erro E de todas as unidades
                 self.errors[self.is_active] -= self.beta * self.errors[self.is_active]
 
     def _insert_node(self):
@@ -100,26 +105,27 @@ class GrowingNeuralGas:
         if len(active_idx) == 0: 
             return
         
-        # Encontra nó de maior erro
+        #determinar o neurônio q com o maior erro acumulado
         u = active_idx[np.argmax(self.errors[active_idx])]
         
-        # Encontra vizinho de u com maior erro
+        #dentre os vizinhos de q, determinar o neurônio f com maior erro acumulado
         neighbors = np.where(self.edges[u] & self.is_active)[0]
-        if len(neighbors) == 0: return
+        if len(neighbors) == 0:
+            return
         v = neighbors[np.argmax(self.errors[neighbors])]
         
-        # Encontra o primeiro índice vazio disponível no array (substitui o alocador dinâmico)
+        #encontra o primeiro índice vazio disponível no array
         free_slots = np.where(~self.is_active)[0]
         if len(free_slots) == 0:
             return
         w = free_slots[0]
         
-        # Atribui valores ao slot vazio
+        #adicionar a nova unidade r a rede interpolando seu vetor de pesos a partir de q e f
         self.nodes[w] = (self.nodes[u] + self.nodes[v]) / 2.0
         self.is_active[w] = True
         self.num_nodes += 1
         
-        # Atualiza a topologia nas posições absolutas da matriz
+        #inserir conexões entre r-q, r-f e remover conexão q-f
         self.edges[u, v] = False
         self.edges[v, u] = False
         
@@ -131,7 +137,9 @@ class GrowingNeuralGas:
         self.ages[u, w] = self.ages[w, u] = 0
         self.ages[v, w] = self.ages[w, v] = 0
         
-        # Reloca os erros
+        #diminuir o erro E das unidades q e f
         self.errors[u] *= self.alpha
         self.errors[v] *= self.alpha
+        
+        #configurar o erro de r a partir dos erros de q e f
         self.errors[w] = self.errors[u]
