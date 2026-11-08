@@ -15,7 +15,6 @@ def main():
     p.add_argument("--epochs", type=int, default=50)
     p.add_argument("--batch-size", type=int, default=128)
     p.add_argument("--lr", type=float, default=1e-3)
-    p.add_argument("--patience", type=int, default=5)
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--latents", type=int, nargs="+", default=[2, 8])
     p.add_argument("--out", default="outputs")
@@ -29,6 +28,7 @@ def main():
     print(f"Dispositivo: {device}" + (f" ({torch.cuda.get_device_name()})" if device.type == "cuda" else ""))
     data = load_data(device, seed=args.seed)
     print(f"Treino {len(data['x_train'])} | validação {len(data['x_val'])} | teste {len(data['x_test'])}\n")
+    print(f"Treinando {args.epochs} épocas completas. Modelo final é o da época com menor loss de validação.\n")
 
     rows = []
     for d in args.latents:
@@ -41,7 +41,7 @@ def main():
             writer = SummaryWriter(runs / run_name)
 
             model, info = train_model(model, data, writer, epochs=args.epochs,
-                                      batch_size=args.batch_size, lr=args.lr, patience=args.patience)
+                                      batch_size=args.batch_size, lr=args.lr, patience=args.epochs)
             writer.close()
 
             torch.save({"name": name, "latent_dim": d, "state_dict": model.state_dict()},
@@ -54,6 +54,10 @@ def main():
             })
             with open(out / "models" / f"{run_name}_history.json", "w") as f:
                 json.dump(info["history"], f)
+
+            print(f"Selecionado: época {info['best_epoch']} de {info['epochs_run']} | "
+                  f"val total {info['val_total']:.3f} (recon {info['val_recon']:.3f} + "
+                  f"KL {info['val_kl']:.3f}) | {info['train_time_s']:.1f} s")
             print()
 
     #tabela de resultados
@@ -70,10 +74,10 @@ def main():
     with open(out / "best.json", "w") as f:
         json.dump(best, f, indent=2)
 
-    print(f"{'latente':>7} {'modelo':>13} {'params':>9} {'época':>6} {'val total':>10} {'recon':>9} {'KL':>7}")
+    print(f"{'latente':>7} {'modelo':>13} {'params':>9} {'melhor época':>13} {'val total':>10} {'recon':>9} {'KL':>7}")
     for r in rows:
         mark = "  <- melhor" if best[str(r["latent_dim"])] == r["modelo"] else ""
-        print(f"{r['latent_dim']:>7} {r['modelo']:>13} {r['parametros']:>9,} {r['melhor_epoca']:>6} "
+        print(f"{r['latent_dim']:>7} {r['modelo']:>13} {r['parametros']:>9,} {r['melhor_epoca']:>13} "
               f"{r['val_total']:>10.3f} {r['val_recon']:>9.3f} {r['val_kl']:>7.3f}{mark}")
     print(f"\nResultados em {out}/results.csv e {out}/best.json")
 
