@@ -1,0 +1,56 @@
+RESULTADOS: VAE no Fashion-MNIST
+============================================================
+
+1) Seleção da topologia (loss de validação = recon + KL)
+------------------------------------------------------------
+latente        modelo     params  val total     recon      KL
+      2    mlp_padrao    404,244     27.773    22.838   4.934
+      2  mlp_profunda  1,068,820     25.681    20.469   5.212  <- melhor
+      2          conv  1,677,509     26.322    21.343   4.979
+      8    mlp_padrao    408,864     23.957    16.040   7.917
+      8  mlp_profunda  1,073,440     22.915    15.440   7.475
+      8          conv  1,682,129     22.684    14.633   8.051  <- melhor
+
+Teste, melhor 2D (mlp_profunda): total 25.734 | recon 20.531 | KL 5.203
+Teste, melhor 8D (conv): total 22.820 | recon 14.789 | KL 8.031
+
+2) PCA do latente 8D (autovalores da matriz de covariância)
+------------------------------------------------------------
+  PC  autovalor  variância  acumulada
+   1     1.0361     21.32%     21.32%
+   2     0.9901     20.37%     41.69%
+   3     0.9241     19.01%     60.70%
+   4     0.8791     18.09%     78.79%
+   5     0.6371     13.11%     91.90%
+   6     0.3933      8.09%     99.99%
+   7     0.0003      0.01%    100.00%
+   8     0.0002      0.00%    100.00%
+
+A projeção em 2D (PC1 + PC2) ilustra 41.7% da variância do latente 8D.
+(Conferido com sklearn.decomposition.PCA.)
+
+3) Clusters e separação dos rótulos (silhouette com os rótulos reais)
+------------------------------------------------------------
+Silhouette varia de -1 a 1: perto de 1 = classes compactas e separadas;
+perto de 0 = classes sobrepostas; negativo = pontos mais perto de outra classe.
+
+Latente 2D               silhouette médio = 0.056
+Latente 8D               silhouette médio = 0.053
+PCA 2D do latente 8D     silhouette médio = -0.004
+
+Silhouette médio por classe:
+classe                  Latente 2D              Latente 8D    PCA 2D do latente 8D
+Camiseta                     0.097                   0.100                   0.034
+Calça                        0.240                   0.124                   0.136
+Pulôver                      0.001                   0.002                  -0.043
+Vestido                      0.051                   0.056                  -0.179
+Casaco                      -0.085                   0.008                  -0.096
+Sandália                     0.283                  -0.049                  -0.030
+Camisa                      -0.229                  -0.034                  -0.131
+Tênis                        0.177                   0.233                  -0.025
+Bolsa                       -0.261                  -0.034                   0.076
+Bota                         0.289                   0.129                   0.221
+
+Latente 2D: mais separadas = Bota, Sandália, Calça; mais misturadas = Bolsa, Camisa, Casaco
+Latente 8D: mais separadas = Tênis, Bota, Calça; mais misturadas = Sandália, Bolsa, Camisa
+PCA 2D do latente 8D: mais separadas = Bota, Calça, Bolsa; mais misturadas = Vestido, Camisa, Casaco
