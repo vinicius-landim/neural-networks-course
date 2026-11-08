@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.4.12)  6 NOV 2026 16:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.4.12)  8 NOV 2026 17:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -483,52 +483,52 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 <figs/curvas_validacao.png, id=72, 859.0494pt x 296.7888pt>
 File: figs/curvas_validacao.png Graphic file (type png)
 <use figs/curvas_validacao.png>
-Package pdftex.def Info: figs/curvas_validacao.png  used on input line 189.
+Package pdftex.def Info: figs/curvas_validacao.png  used on input line 190.
 (pdftex.def)             Requested size: 483.69687pt x 167.11084pt.
  [2]
 <figs/reconstrucoes.png, id=85, 630.1944pt x 248.127pt>
 File: figs/reconstrucoes.png Graphic file (type png)
 <use figs/reconstrucoes.png>
-Package pdftex.def Info: figs/reconstrucoes.png  used on input line 223.
+Package pdftex.def Info: figs/reconstrucoes.png  used on input line 224.
 (pdftex.def)             Requested size: 435.32422pt x 171.4009pt.
  [3 <./figs/curvas_validacao.png> <./figs/reconstrucoes.png>]
 <figs/amostras.png, id=95, 574.3056pt x 283.2984pt>
 File: figs/amostras.png Graphic file (type png)
 <use figs/amostras.png>
-Package pdftex.def Info: figs/amostras.png  used on input line 239.
+Package pdftex.def Info: figs/amostras.png  used on input line 240.
 (pdftex.def)             Requested size: 435.32422pt x 214.74706pt.
 <figs/latente_2d.png, id=98, 587.3142pt x 421.575pt>
 File: figs/latente_2d.png Graphic file (type png)
 <use figs/latente_2d.png>
-Package pdftex.def Info: figs/latente_2d.png  used on input line 265.
+Package pdftex.def Info: figs/latente_2d.png  used on input line 266.
 (pdftex.def)             Requested size: 362.77264pt x 260.39601pt.
  [4 <./figs/amostras.png>]
 <figs/latente_2d_por_classe.png, id=106, 1148.6112pt x 485.1726pt>
 File: figs/latente_2d_por_classe.png Graphic file (type png)
 <use figs/latente_2d_por_classe.png>
-Package pdftex.def Info: figs/latente_2d_por_classe.png  used on input line 273.
+Package pdftex.def Info: figs/latente_2d_por_classe.png  used on input line 274.
 (pdftex.def)             Requested size: 483.69687pt x 204.31152pt.
 <figs/manifold_2d.png, id=108, 498.663pt x 505.4082pt>
 File: figs/manifold_2d.png Graphic file (type png)
 <use figs/manifold_2d.png>
-Package pdftex.def Info: figs/manifold_2d.png  used on input line 297.
+Package pdftex.def Info: figs/manifold_2d.png  used on input line 298.
 (pdftex.def)             Requested size: 338.58632pt x 343.16403pt.
  [5 <./figs/latente_2d.png> <./figs/latente_2d_por_classe.png>]
 <figs/pca_variancia.png, id=119, 440.3652pt x 282.8166pt>
 File: figs/pca_variancia.png Graphic file (type png)
 <use figs/pca_variancia.png>
-Package pdftex.def Info: figs/pca_variancia.png  used on input line 330.
+Package pdftex.def Info: figs/pca_variancia.png  used on input line 331.
 (pdftex.def)             Requested size: 290.22107pt x 186.39629pt.
  [6 <./figs/manifold_2d.png>]
 <figs/pca_8d.png, id=128, 587.3142pt x 422.0568pt>
 File: figs/pca_8d.png Graphic file (type png)
 <use figs/pca_8d.png>
-Package pdftex.def Info: figs/pca_8d.png  used on input line 346.
+Package pdftex.def Info: figs/pca_8d.png  used on input line 347.
 (pdftex.def)             Requested size: 362.77264pt x 260.6936pt.
 <figs/pca_8d_por_classe.png, id=129, 1148.6112pt x 485.1726pt>
 File: figs/pca_8d_por_classe.png Graphic file (type png)
 <use figs/pca_8d_por_classe.png>
-Package pdftex.def Info: figs/pca_8d_por_classe.png  used on input line 354.
+Package pdftex.def Info: figs/pca_8d_por_classe.png  used on input line 355.
 (pdftex.def)             Requested size: 483.69687pt x 204.31152pt.
  [7 <./figs/pca_variancia.png> <./figs/pca_8d.png>] [8 <./figs/pca_8d_por_classe.png>] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
@@ -537,13 +537,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  11416 strings out of 480247
  174395 string characters out of 5896151
- 479029 words of memory out of 5000000
+ 479031 words of memory out of 5000000
  29125 multiletter control sequences out of 15000+600000
  551334 words of font info for 85 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  60i,10n,63p,395b,368s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbxi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmib10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb>
-Output written on main.pdf (8 pages, 3106300 bytes).
+Output written on main.pdf (8 pages, 3093400 bytes).
 PDF statistics:
  226 PDF objects out of 1000 (max. 8388607)
  164 compressed objects within 2 object streams

@@ -113,9 +113,8 @@ decodificador para retornar a $28 \times 28$.
 \end{table}
 
 Os seis modelos foram treinados com os mesmos hiperparâmetros, apresentados na
-Tabela~\ref{tab:config}. O treinamento foi interrompido quando a perda de
-validação não melhorou por cinco épocas consecutivas, e foram mantidos os pesos
-da melhor época. A evolução das perdas, das reconstruções e das imagens geradas
+Tabela~\ref{tab:config}. Cada modelo foi treinado por $50$ épocas, e foram
+mantidos os pesos da época com menor perda de validação. A evolução das perdas, das reconstruções e das imagens geradas
 foi acompanhada no TensorBoard.
 
 \begin{table}[H]
@@ -128,8 +127,8 @@ foi acompanhada no TensorBoard.
     Otimizador & Adam \\
     Taxa de aprendizado & $10^{-3}$ \\
     Tamanho do lote & $128$ \\
-    Épocas (máximo) & $50$ \\
-    \textit{Early stopping} & paciência de $5$ épocas, pela perda de validação \\
+    Épocas & $50$ \\
+    Seleção do modelo & época com menor perda de validação \\
     Semente aleatória & $42$ \\
     \bottomrule
   \end{tabular}
@@ -144,10 +143,12 @@ produzida pelo codificador, sem amostragem. O espaço latente 2D é visualizado
 diretamente, e o 8D é projetado em duas dimensões por Análise de Componentes
 Principais (PCA). A variância explicada pela projeção é
 $(\lambda_1 + \lambda_2)/\sum_j \lambda_j$, em que $\lambda_j$ são os autovalores
-da matriz de covariância das representações. Para quantificar a separação das
+da matriz de covariância das representações.
+
+Para quantificar a separação das
 classes, foi usado o coeficiente de silhueta calculado com os rótulos reais, que
-varia de $-1$ a $1$: valores próximos de $1$ indicam classes compactas e
-separadas, próximos de $0$ indicam classes encostadas ou sobrepostas, e valores
+varia de $-1$ a $1$, sendo valores próximos de $1$ aqueles que indicam classes compactas e
+separadas, os próximos de $0$ indicam classes encostadas ou sobrepostas, e valores
 negativos indicam pontos mais próximos de outra classe do que da sua.
 
 % =====================================================================
@@ -158,7 +159,7 @@ Figura~\ref{fig:curvas} mostra a sua evolução durante o treinamento. A MLP
 profunda foi a melhor no espaço 2D e a rede convolucional no espaço 8D. Nas duas
 dimensões, a MLP padrão teve a maior perda, o que indica que uma única camada
 oculta limita a capacidade do modelo. Os dois modelos vencedores tiveram perdas
-de teste praticamente iguais às de validação ($25{,}73$ e $22{,}82$), sem sinais
+de teste praticamente iguais às de validação ($25{,}70$ e $22{,}99$), sem sinais
 de sobreajuste.
 
 \begin{table}[H]
@@ -166,20 +167,20 @@ de sobreajuste.
   \small
   \begin{tabular}{clcccc}
     \toprule
-    $d$ & Modelo & Melhor época & Perda total & Reconstrução & KL \\
+    $d$ & Modelo & Melhor época & \emph{Loss} total & Reconstrução & KL \\
     \midrule
     2
-      & MLP padrão    & 36 & 27{,}77 & 22{,}84 & 4{,}93 \\
+      & MLP padrão    & 49 & 27{,}62 & 22{,}50 & 5{,}12 \\
       & MLP profunda  & 50 & \textbf{25{,}68} & 20{,}47 & 5{,}21 \\
-      & Convolucional & 33 & 26{,}32 & 21{,}34 & 4{,}98 \\
+      & Convolucional & 49 & 26{,}13 & 20{,}78 & 5{,}35 \\
     \midrule
     8
       & MLP padrão    & 47 & 23{,}96 & 16{,}04 & 7{,}92 \\
-      & MLP profunda  & 39 & 22{,}92 & 15{,}44 & 7{,}48 \\
-      & Convolucional & 50 & \textbf{22{,}68} & 14{,}63 & 8{,}05 \\
+      & MLP profunda  & 49 & 22{,}91 & 15{,}37 & 7{,}54 \\
+      & Convolucional & 50 & \textbf{22{,}85} & 15{,}09 & 7{,}76 \\
     \bottomrule
   \end{tabular}
-  \caption{Perda no conjunto de validação (média por imagem) para cada
+  \caption{\emph{Loss} no conjunto de validação (média por imagem) para cada
   topologia e dimensão latente. Em negrito, o modelo escolhido.}
   \label{tab:selecao}
 \end{table}
@@ -192,14 +193,14 @@ de sobreajuste.
     \label{fig:curvas}
 \end{figure}
 
-A diferença entre os dois melhores candidatos foi pequena ($0{,}64$ no espaço 2D
-e $0{,}23$ no 8D) e cada modelo foi treinado uma única vez, então a ordem entre a
+A diferença entre os dois melhores candidatos foi pequena ($0{,}45$ no espaço 2D
+e $0{,}06$ no 8D) e cada modelo foi treinado uma única vez, então a ordem entre a
 MLP profunda e a rede convolucional não é conclusiva. Além disso, os dois
 vencedores atingiram o limite de $50$ épocas com a perda ainda em leve queda.
 
-A comparação entre as dimensões mostra o compromisso entre os dois termos da
+A comparação entre as dimensões mostra a relação entre os dois termos da
 Equação~\ref{eq:loss}. Com $8$ dimensões, o erro de reconstrução foi cerca de
-$30\%$ menor, enquanto o termo KL aumentou. O espaço maior permite guardar mais
+$26\%$ menor, enquanto o termo KL aumentou. O espaço maior permite guardar mais
 informação sobre cada imagem, e o termo KL mede justamente essa quantidade de
 informação. Por isso, a perda total só é comparável entre modelos com a mesma
 dimensão latente.
@@ -288,9 +289,9 @@ Em $28 \times 28$ pixels e sem cor, essas peças diferem apenas em detalhes como
 o comprimento da manga e a presença de botões ou gola.
 
 A bolsa é a única classe dividida em dois grupos separados, abaixo da origem.
-O mapa da Figura~\ref{fig:manifold} indica o motivo: um grupo corresponde a
-bolsas retangulares sem alça, e o outro a bolsas com alça. O modelo encontrou uma
-subdivisão da classe que os rótulos não registram.
+O mapa da Figura~\ref{fig:manifold} indica a razão, que consiste no fato de que
+um grupo corresponde a bolsas retangulares sem alça, e o outro a bolsas com alça. 
+Ou seja, o modelo encontrou uma subdivisão da classe que os rótulos não registram.
 
 \begin{figure}[H]
     \centering
@@ -315,9 +316,9 @@ a priori, as imagens tendem a ficar mais escuras e exageradas.
 
 A Figura~\ref{fig:pca-var} mostra a variância explicada por cada componente
 principal das representações 8D. A projeção nas duas primeiras componentes
-explica $41{,}7\%$ da variância. As seis primeiras componentes têm autovalores
-entre $0{,}39$ e $1{,}04$, e as duas últimas têm variância praticamente nula.
-Isso indica que duas das oito dimensões latentes não foram usadas pelo modelo,
+explica $45{,}6\%$ da variância. As cinco primeiras componentes têm autovalores
+entre $0{,}65$ e $1{,}05$, e as três últimas têm variância praticamente nula.
+Isso indica que três das oito dimensões latentes não foram usadas pelo modelo,
 um fenômeno conhecido como colapso posterior, em que o codificador mantém essas
 dimensões iguais à distribuição a priori para não pagar o custo do termo KL. Nas
 dimensões usadas, os autovalores próximos de $1$ são esperados, pois o termo KL
@@ -358,7 +359,7 @@ peças, e não uma particularidade de um treinamento.
 \end{figure}
 
 A projeção perde parte da separação existente no espaço completo. O coeficiente
-de silhueta médio foi de $0{,}053$ no espaço 8D e caiu para $-0{,}004$ na
+de silhueta médio foi de $0{,}059$ no espaço 8D e caiu para $-0{,}002$ na
 projeção, e na projeção as classes se sobrepõem mais do que no espaço latente 2D
 treinado diretamente (silhueta de $0{,}056$). Parte da distinção entre as
 classes está, portanto, nas componentes que a projeção descarta.
@@ -366,17 +367,17 @@ classes está, portanto, nas componentes que a projeção descarta.
 % =====================================================================
 \section{Resultados e Discussão}
 
-\textbf{Há formação de clusters no espaço latente?} Não na forma de grupos
-isolados. Nos dois espaços, as representações formam uma nuvem contínua em torno
+A respeito da formação de \emph{clusters} no espaço latente, observou-se que
+eles não ocorrem na forma de grupos isolados. Nos dois espaços, as representações formam uma nuvem contínua em torno
 da origem, e o coeficiente de silhueta ficou próximo de zero ($0{,}056$ no 2D e
-$0{,}053$ no 8D). O que se observa são regiões mais densas e grupos de classes
+$0{,}059$ no 8D). O que se observa são regiões mais densas e grupos de classes
 vizinhas. Esse resultado é coerente com o funcionamento do VAE: o termo KL
 aproxima as distribuições de todas as imagens da mesma normal padrão, o que as
 faz se sobrepor e elimina os espaços vazios. É essa mesma propriedade que permite
 gerar imagens a partir de qualquer ponto e obter transições suaves entre peças.
-
-\textbf{Há separação dos rótulos no espaço latente?} Parcialmente, e de acordo
-com a semelhança visual. Os calçados, a calça e a bolsa ocupam regiões próprias,
+ 
+Em relação à separação dos rótulos no espaço latente, observou-se que ela
+ocorre parcialmente, e de acordo com a semelhança visual. Os calçados, a calça e a bolsa ocupam regiões próprias,
 enquanto camiseta, pulôver, casaco e camisa se sobrepõem, com a camisa com
 silhueta negativa nas três representações. O espaço latente foi organizado
 sem acesso aos rótulos e, por isso, reflete a aparência das imagens e não a
@@ -384,14 +385,15 @@ divisão em classes: peças parecidas ficam próximas mesmo quando têm rótulos
 diferentes, e uma classe com estilos visualmente distintos, como a bolsa, pode ser
 dividida. O coeficiente de silhueta deve ser lido com essa ressalva, pois
 penaliza tanto classes encostadas quanto classes divididas em subgrupos.
-
-\textbf{A projeção ilustra quanto da variância?} A projeção do espaço 8D nas duas
-primeiras componentes principais ilustra $41{,}7\%$ da variância. O valor é baixo
-porque o modelo distribuiu a informação de forma quase uniforme entre as seis
+ 
+Quanto à variância ilustrada pela projeção, observou-se que o espaço 8D
+projetado nas duas primeiras componentes principais representa $45{,}6\%$ da
+variância total. O valor é baixo
+porque o modelo distribuiu a informação de forma quase uniforme entre as cinco
 dimensões que usou, e porque o termo KL tende a igualar a variância das
 dimensões. A projeção mostra os mesmos grupos de vizinhança do espaço 2D, mas
 com mais sobreposição.
-
+ 
 Os resultados devem ser lidos com algumas ressalvas. Cada modelo foi treinado uma
 única vez, com semente fixa, e os hiperparâmetros não foram variados, então a
 diferença entre a MLP profunda e a rede convolucional pode não se repetir. Os
@@ -401,5 +403,41 @@ de gerar peças reconhecíveis. O espaço 2D permite visualização direta e
 interpretação do mapa gerativo, mas força mais sobreposição; o espaço 8D
 reconstrói melhor, mas só pode ser visto por uma projeção que mostra menos da
 metade da sua variância.
+
+% \textbf{Há formação de clusters no espaço latente?} Não na forma de grupos
+% isolados. Nos dois espaços, as representações formam uma nuvem contínua em torno
+% da origem, e o coeficiente de silhueta ficou próximo de zero ($0{,}056$ no 2D e
+% $0{,}059$ no 8D). O que se observa são regiões mais densas e grupos de classes
+% vizinhas. Esse resultado é coerente com o funcionamento do VAE: o termo KL
+% aproxima as distribuições de todas as imagens da mesma normal padrão, o que as
+% faz se sobrepor e elimina os espaços vazios. É essa mesma propriedade que permite
+% gerar imagens a partir de qualquer ponto e obter transições suaves entre peças.
+
+% \textbf{Há separação dos rótulos no espaço latente?} Parcialmente, e de acordo
+% com a semelhança visual. Os calçados, a calça e a bolsa ocupam regiões próprias,
+% enquanto camiseta, pulôver, casaco e camisa se sobrepõem, com a camisa com
+% silhueta negativa nas três representações. O espaço latente foi organizado
+% sem acesso aos rótulos e, por isso, reflete a aparência das imagens e não a
+% divisão em classes: peças parecidas ficam próximas mesmo quando têm rótulos
+% diferentes, e uma classe com estilos visualmente distintos, como a bolsa, pode ser
+% dividida. O coeficiente de silhueta deve ser lido com essa ressalva, pois
+% penaliza tanto classes encostadas quanto classes divididas em subgrupos.
+
+% \textbf{A projeção ilustra quanto da variância?} A projeção do espaço 8D nas duas
+% primeiras componentes principais ilustra $45{,}6\%$ da variância. O valor é baixo
+% porque o modelo distribuiu a informação de forma quase uniforme entre as cinco
+% dimensões que usou, e porque o termo KL tende a igualar a variância das
+% dimensões. A projeção mostra os mesmos grupos de vizinhança do espaço 2D, mas
+% com mais sobreposição.
+
+% Os resultados devem ser lidos com algumas ressalvas. Cada modelo foi treinado uma
+% única vez, com semente fixa, e os hiperparâmetros não foram variados, então a
+% diferença entre a MLP profunda e a rede convolucional pode não se repetir. Os
+% modelos escolhidos também atingiram o limite de épocas. Em conclusão, os VAEs
+% aprenderam espaços latentes contínuos e organizados por semelhança visual, capazes
+% de gerar peças reconhecíveis. O espaço 2D permite visualização direta e
+% interpretação do mapa gerativo, mas força mais sobreposição; o espaço 8D
+% reconstrói melhor, mas só pode ser visto por uma projeção que mostra menos da
+% metade da sua variância.
 
 \end{document}
