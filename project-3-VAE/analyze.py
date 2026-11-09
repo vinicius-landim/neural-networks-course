@@ -194,7 +194,7 @@ def main():
 
     if 8 in models:
         z8 = encode_mu(models[8], x_test)
-        # PCA com todos os componentes, para obter todos os autovalores
+        # PCA com todos as coordenadas médias (8 dim), para obter todos os autovalores
         pca = PCA().fit(z8)
         proj = pca.transform(z8)[:, :2] # projeção nos 2 primeiros componentes
         eigvals = pca.explained_variance_ # autovalores da matriz de covariância
