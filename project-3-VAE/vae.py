@@ -209,10 +209,6 @@ def log_images(writer, model, epoch, x_fixed, z_fixed):
         writer.add_image("manifold_2d", make_grid(grid, nrow=15), epoch)
 
 def train_model(model, data, writer=None, epochs=50, batch_size=128, lr=1e-3, patience=5):
-    """Treina com Adam e early stopping pela loss de validação.
-
-    Retorna o modelo com os pesos da melhor época e um dicionário com o resumo.
-    """
     device = data["x_train"].device
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
